@@ -3,16 +3,20 @@ const bcrypt = require("bcryptjs");
 
 const usuarioSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
-  ap: { type: String, required: true },
-  am: { type: String, required: true },
-  username: { type: String, required: true, unique: true },
+  ap: { type: String, required: false }, // Opcional para usuarios de Google
+  am: { type: String, required: false }, // Opcional para usuarios de Google
+  username: { type: String, required: false, unique: true, sparse: true }, // Opcional para Google
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  telefono: { type: String, required: true },
-  preguntaSecreta: { type: String, required: true },
-  respuestaSecreta: { type: String, required: true },
+  password: { type: String, required: false }, // Opcional para usuarios de Google
+  telefono: { type: String, required: false }, // Opcional para usuarios de Google
+  preguntaSecreta: { type: String, required: false }, // Opcional para usuarios de Google
+  respuestaSecreta: { type: String, required: false }, // Opcional para usuarios de Google
   rol: { type: String, enum: ["usuario", "admin"], default: "usuario" },
-  verificado: { type: Boolean, default: false }, // <- importante
+  verificado: { type: Boolean, default: false },
+  // Campos para Google OAuth
+  googleId: { type: String, unique: true, sparse: true },
+  picture: { type: String }, // URL de la foto de perfil de Google
+  provider: { type: String, enum: ["local", "google"], default: "local" }, // Proveedor de autenticación
 }, { timestamps: true });
 
 usuarioSchema.methods.comparePassword = async function (password) {
